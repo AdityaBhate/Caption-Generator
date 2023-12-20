@@ -4,8 +4,11 @@ import { useState } from "react"
 import axios from "axios"
 import { useRouter } from "next/navigation";
 import UploadIcon from "../components/UploadIcon";
+import { useSession, signIn } from 'next-auth/react';
+import UserPlus from '../components/UserPlus';
 
 function UploadForm() {
+    const { data, status } = useSession();
 
     const [uploading, setUploading] = useState(false)
     const router = useRouter()
@@ -31,12 +34,22 @@ function UploadForm() {
                     <h4 className="text-sm text-gray-300">Please wait, It may take a while</h4>
                 </div>
             </div>}
-            <label className="inline-flex gap-2 border-2 border-purple-700/50 bg-green-600 rounded-full px-6 py-2 cursor-pointer">
-                <UploadIcon />
-                <span>Get Started</span>
+            {
+                status === "authenticated" ? (
+                    <label className="inline-flex gap-2 border-2 border-purple-700/50 bg-green-600 rounded-full px-6 py-2 cursor-pointer">
+                        <UploadIcon />
+                        <span>Get Started</span>
 
-                <input onChange={upload} type="file" className="hidden" />
-            </label></>
+                        <input onChange={upload} type="file" className="hidden" />
+                    </label>
+                ) : (
+                    <button className="inline-flex gap-2 border-2 border-purple-700/50 bg-green-600 rounded-full px-6 py-2 cursor-pointer" onClick={() => signIn("google")}>
+                        Sign in
+                        <UserPlus />
+                    </button>
+                )
+            }
+        </>
     )
 }
 
